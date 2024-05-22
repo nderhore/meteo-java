@@ -32,6 +32,7 @@ public class WeatherManager {
 
     public WeatherManager(String city) {
         this.city = city;
+        this.changeCity(this.city);
     }
 
     public void getWeather(){
