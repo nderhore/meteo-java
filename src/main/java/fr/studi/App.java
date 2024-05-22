@@ -19,7 +19,7 @@ public class App extends Application
             try {
                 //chargement du fichier FXML
                 FXMLLoader loader = new FXMLLoader();
-                loader.setLocation(App.class.getResource("/meteo.fxml"));
+                loader.setLocation(App.class.getResource("/fxml/meteo.fxml"));
                 Parent root = loader.load();
 
                 //création et initialisation de la scene
