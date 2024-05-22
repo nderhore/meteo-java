@@ -1,5 +1,6 @@
 package fr.studi.manager;
 
+import fr.studi.pojo.Weather;
 import lombok.Data;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -8,9 +9,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -20,24 +19,15 @@ import java.util.Locale;
 @Data
 public class WeatherManager {
 
-    private String city;
-    private String day;
-    private Double temperature;
-    private String icon;
-    private String description;
-    private String windSpeed;
-    private String cloudiness;
-    private String pressure;
-    private String humidity;
+   private Weather weatherDisplayed;
 
     public WeatherManager(String city) {
-        this.city = city;
-        this.changeCity(this.city);
+        this.weatherDisplayed = new Weather(city);
+        this.changeCity(city);
     }
 
     public void getWeather(){
         JSONObject json = new JSONObject();
-        JSONObject jsonToDisplay = new JSONObject();
 
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE", Locale.ENGLISH);
         Calendar calendar = Calendar.getInstance();
@@ -45,30 +35,35 @@ public class WeatherManager {
 
         try{
             json = readJsonFromURL("http://api.openweathermap.org/data/2.5/weather?q="
-            + city + "&appid=f055e781701949f279e6657ceaa1d158&units=metric");
+            + this.weatherDisplayed.getCity() + "&appid=f055e781701949f279e6657ceaa1d158&units=metric");
         } catch (IOException e){
             return;
         }
         if(json != null){
-            jsonToDisplay = json.getJSONObject("main");
-            this.temperature = jsonToDisplay.getDouble("temp");
-            this.pressure = jsonToDisplay.get("pressure").toString();
-            this.humidity = jsonToDisplay.get("humidity").toString();
-
-            jsonToDisplay = json.getJSONObject("wind");
-            this.windSpeed = jsonToDisplay.get("speed").toString();
-
-            jsonToDisplay = json.getJSONObject("clouds");
-            this.cloudiness = jsonToDisplay.get("all").toString();
-
-            jsonToDisplay = json.getJSONArray("weather").getJSONObject(0);
-            this.icon = jsonToDisplay.getString("icon");
-            this.description = jsonToDisplay.get("description").toString();
-
+            adaptWeatherToNewCity(json);
             calendar.add(Calendar.DATE, day);
-            this.day = sdf.format(calendar.getTime());
+            this.weatherDisplayed.setDay(sdf.format(calendar.getTime()));
         }
 
+    }
+
+    private void adaptWeatherToNewCity(JSONObject json) {
+        JSONObject jsonToDisplay = new JSONObject();
+
+        jsonToDisplay = json.getJSONObject("main");
+        this.weatherDisplayed.setTemperature(jsonToDisplay.getDouble("temp"));
+        this.weatherDisplayed.setPressure(jsonToDisplay.get("pressure").toString());
+        this.weatherDisplayed.setHumidity(jsonToDisplay.get("humidity").toString());
+
+        jsonToDisplay = json.getJSONObject("wind");
+        this.weatherDisplayed.setWindSpeed(jsonToDisplay.get("speed").toString());
+
+        jsonToDisplay = json.getJSONObject("clouds");
+        this.weatherDisplayed.setCloudiness(jsonToDisplay.get("all").toString());
+
+        jsonToDisplay = json.getJSONArray("weather").getJSONObject(0);
+        this.weatherDisplayed.setIcon(jsonToDisplay.getString("icon"));
+        this.weatherDisplayed.setDescription(jsonToDisplay.get("description").toString());
     }
 
     private JSONObject readJsonFromURL(String url) throws IOException, JSONException {
@@ -96,11 +91,14 @@ public class WeatherManager {
 
     @Override
     public String toString(){
-        return this.day + " " + this.temperature + " " + this.pressure + " " + this.humidity;
+        return this.weatherDisplayed.getDay() + " " +
+                this.weatherDisplayed.getTemperature() + " " +
+                this.weatherDisplayed.getPressure() + " " +
+                this.weatherDisplayed.getHumidity();
     }
 
     public void changeCity(String city) {
-        this.city = city;
+        this.weatherDisplayed.setCity(city);
         this.getWeather();
     }
 }

@@ -29,7 +29,6 @@ public class WeatherController implements Initializable {
     @FXML
     private Label temperature, day, desc, windSpeed, cloudiness, pressure, humidity;
 
-
     private String citySet;
 
     public WeatherController() {
@@ -76,12 +75,12 @@ public class WeatherController implements Initializable {
     }
 
     private void showWeather() {
-        temperature.setText(weatherManager.getTemperature().toString()+"°C");
-        day.setText(weatherManager.getDay().toLowerCase());
-        desc.setText(weatherManager.getDescription().toLowerCase());
-        windSpeed.setText(weatherManager.getWindSpeed()+" m/s");
-        cloudiness.setText(weatherManager.getCloudiness()+" %");
-        pressure.setText(weatherManager.getPressure()+" hPa");
-        humidity.setText(weatherManager.getHumidity()+" %");
+        temperature.setText(weatherManager.getWeatherDisplayed().getTemperature().toString()+"°C");
+        day.setText(weatherManager.getWeatherDisplayed().getDay().toLowerCase());
+        desc.setText(weatherManager.getWeatherDisplayed().getDescription().toLowerCase());
+        windSpeed.setText(weatherManager.getWeatherDisplayed().getWindSpeed()+" m/s");
+        cloudiness.setText(weatherManager.getWeatherDisplayed().getCloudiness()+" %");
+        pressure.setText(weatherManager.getWeatherDisplayed().getPressure()+" hPa");
+        humidity.setText(weatherManager.getWeatherDisplayed().getHumidity()+" %");
     }
 }
