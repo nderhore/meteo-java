@@ -43,7 +43,8 @@ public class WeatherController implements Initializable {
             if(!city.isEmpty() ) {
                 city = city.toLowerCase();
                 weatherManager.changeCity(city);
-                System.out.println(weatherManager);
+                showWeather();
+                System.out.println(city);
                 this.error.setVisible(false);
             }else {
                 this.error.setText("Le champ ne peux pas être vide");
@@ -57,13 +58,11 @@ public class WeatherController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         cityName.setText(citySet);
         error.setVisible(false);
-
-
         weatherManager = new WeatherManager(this.citySet);
-
         try {
             showWeather();
         } catch (NullPointerException e) {
+            e.printStackTrace();
             this.error.setVisible(true);
             this.error.setTextFill(Color.TOMATO);
             this.error.setText("Pas d'internet !");
